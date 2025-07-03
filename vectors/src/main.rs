@@ -1,5 +1,5 @@
 use crate::example_four::w3_problem_four;
-use tokio::*;
+
 
 mod example_one;
 mod example_two;
@@ -8,9 +8,8 @@ mod example_four;
 mod example_five;
 mod example_six;
 
-#[tokio::main]
-async fn main() {
-    /*example_one::w3_problem_one();
+fn main() {
+    example_one::w3_problem_one();
 
     example_two::w3_problem_two();
 
@@ -20,7 +19,7 @@ async fn main() {
 
     example_five::w3_problem_five();
 
-    example_six::w3_problem_six();*/
+    example_six::w3_problem_six();
 
 }
 
