@@ -2,15 +2,21 @@ use tokio::*;
 use serde::*;
 use reqwest::*;
 
+mod riotmatchinfo;
 mod riotclient;
 
-const API_TOKEN: &str = "";
+#[derive(Debug, Deserialize)]
+struct RiotAccount {
+    pub puuid: String, 
+    pub gameName: String, 
+    pub tagLine: String
+}
 
 #[tokio::main]
 async fn main() {
     
-    let account_puuid = riotclient::getRiotAccountPUUID(API_TOKEN).await;
-    println!("{:?}", account_puuid.puuid);
+    riotmatchinfo::getRiotAccountMatches();
+
 }
 
 
