@@ -1,13 +1,8 @@
 //use tokio::*;
 use reqwest::*;
 use serde::*;
+use crate::RiotAccount;
 
-#[derive(Debug, Deserialize)]
-pub struct RiotAccount {
-    pub puuid: String, 
-    pub gameName: String, 
-    pub tagLine: String
-}
 
 pub async fn getRiotAccountPUUID(API_TOKEN: &str) -> RiotAccount {
     let client = reqwest::Client::new();
@@ -22,4 +17,5 @@ pub async fn getRiotAccountPUUID(API_TOKEN: &str) -> RiotAccount {
         .unwrap();
 
     response
+
 }
