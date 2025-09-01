@@ -1,14 +1,7 @@
-use tokio::*;
 use serde::*;
 use crate::riotclient;
-use crate::RiotAccount;
 use serde_json::Value;
 use serde_json::to_string_pretty;
-use std::fs;
-use chrono::{Utc, TimeZone, Duration as ChronoDuration};
-use humantime::format_duration;
-use std::time::Duration;
-
 
 
 pub struct MatchCounter { 
@@ -17,13 +10,13 @@ pub struct MatchCounter {
 
 #[derive(Debug, Deserialize)]
 pub struct GameInsights {
-    pub gameDuration: u32,
-    pub gameType: String,
+    pub gameduration: u32,
+    pub gametype: String,
 
 }
 impl GameInsights {
     pub fn is_ranked(&self) -> bool {
-        self.gameType == "MATCHED_GAME"
+        self.gametype == "MATCHED_GAME"
     }
 }
 
@@ -33,21 +26,21 @@ const API_TOKEN: &str = "api token";
 
 
 
-pub async fn getRiotAccountMatches(MATCHES_API_ENDPOINT: String) -> Value {
+pub async fn getriotaccountmatches(matches_api_endpoint: String) -> Value {
 
-    let player_uuid = riotclient::getRiotAccountPUUID(API_TOKEN).await;
+    let _player_uuid = riotclient::getriotaccount_puuid(API_TOKEN).await;
 
     let client = reqwest::Client::new();
 
-    let player_matches: Value = client.get(MATCHES_API_ENDPOINT).header("X-Riot-Token", API_TOKEN).send().await.unwrap().json::<Value>().await.unwrap();
+    let player_matches: Value = client.get(matches_api_endpoint).header("X-Riot-Token", API_TOKEN).send().await.unwrap().json::<Value>().await.unwrap();
 
     return player_matches;
 
 }
 
-pub async fn getMatchesToday(player_matches: Value) -> u8 {
+pub async fn _getmatchestoday(player_matches: Value) -> u8 {
 
-    let client = reqwest::Client::new();
+    let _client = reqwest::Client::new();
 
     let mut gamestoday = MatchCounter {
         totalgamestoday: 0
@@ -61,7 +54,7 @@ pub async fn getMatchesToday(player_matches: Value) -> u8 {
 
 }
 
-pub async fn getMatchInsightsWeekly(player_matches: &Value) -> (u8, u32, u8, u32) {
+pub async fn getmatchinsightsweekly(player_matches: &Value) -> (u8, u32, u8, u32) {
     let client = reqwest::Client::new();
 
     let mut gamestoday = MatchCounter {
@@ -71,14 +64,12 @@ pub async fn getMatchInsightsWeekly(player_matches: &Value) -> (u8, u32, u8, u32
     let mut total_duration = 0;
     let mut total_ranked_matches = 0;
     let mut longest_game = 0;
-    let mut iterator = 0;
-    let mut average_pings = 0;
 
     for i in player_matches.as_array().unwrap() {
-        let MATCHINFO_API_ENDPOINT: &str = &(("https://americas.api.riotgames.com/lol/match/v5/matches/").to_owned() + i.as_str().unwrap());
+        let matchinfo_api_endpoint: &str = &(("https://americas.api.riotgames.com/lol/match/v5/matches/").to_owned() + i.as_str().unwrap());
 
         let match_details = client
-            .get(MATCHINFO_API_ENDPOINT)
+            .get(matchinfo_api_endpoint)
             .header("X-Riot-Token", API_TOKEN)
             .send()
             .await
@@ -87,15 +78,14 @@ pub async fn getMatchInsightsWeekly(player_matches: &Value) -> (u8, u32, u8, u32
             .await
             .unwrap();
 
-        let json = to_string_pretty(&match_details).unwrap();
+        let _json = to_string_pretty(&match_details).unwrap();
 
         let info = &match_details["info"];
         if let Ok(insights) = serde_json::from_value::<GameInsights>(info.clone()) {
-            total_duration += insights.gameDuration;
+            total_duration += insights.gameduration;
 
-            if insights.gameDuration > longest_game {
-                longest_game = insights.gameDuration;
-                iterator +=1; 
+            if insights.gameduration > longest_game {
+                longest_game = insights.gameduration;
             }
 
             if insights.is_ranked() {
