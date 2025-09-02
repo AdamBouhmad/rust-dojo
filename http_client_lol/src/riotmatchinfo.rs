@@ -3,6 +3,8 @@ use crate::riotclient;
 use serde_json::Value;
 use serde_json::to_string_pretty;
 
+use dotenvy::*;
+
 
 pub struct MatchCounter { 
     pub totalgamestoday: u8,
@@ -10,7 +12,9 @@ pub struct MatchCounter {
 
 #[derive(Debug, Deserialize)]
 pub struct GameInsights {
+    #[serde(rename = "gameDuration")]
     pub gameduration: u32,
+    #[serde(rename = "gameType")]
     pub gametype: String,
 
 }
@@ -22,7 +26,7 @@ impl GameInsights {
 
 
 
-const API_TOKEN: &str = "api token";
+const API_TOKEN: &str = "api_token";
 
 
 
@@ -38,7 +42,7 @@ pub async fn getriotaccountmatches(matches_api_endpoint: String) -> Value {
 
 }
 
-pub async fn _getmatchestoday(player_matches: Value) -> u8 {
+pub async fn getmatchestoday(player_matches: &Value) -> u8 {
 
     let _client = reqwest::Client::new();
 
@@ -79,6 +83,7 @@ pub async fn getmatchinsightsweekly(player_matches: &Value) -> (u8, u32, u8, u32
             .unwrap();
 
         let _json = to_string_pretty(&match_details).unwrap();
+
 
         let info = &match_details["info"];
         if let Ok(insights) = serde_json::from_value::<GameInsights>(info.clone()) {
